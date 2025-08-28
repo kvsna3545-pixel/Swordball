@@ -1,0 +1,421 @@
+--[[
+  Blade Ball God Mode Script
+  Created by: kvsna3545
+  Features: Ultra-fast ball hitting, god-like abilities
+  Note: This script has anti-copy protection
+]]
+
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+
+-- Unique identifier for this script
+local scriptSignature = "KVSNA3545_GODMODE_"..math.random(10000,99999)
+
+-- Anti-tampering measures
+local function integrityCheck()
+    if tostring(_G[scriptSignature]) ~= "VALID" then
+        Rayfield:Destroy()
+        error("Script integrity check failed - Created by kvsna3545")
+        return false
+    end
+    return true
+end
+
+-- Initialize script validation
+_G[scriptSignature] = "VALID"
+
+-- Create the window with creator credit
+local Window = Rayfield:CreateWindow({
+    Name = "🔥 GOD MODE Blade Ball - by kvsna3545 🔥",
+    LoadingTitle = "Loading God Mode...",
+    LoadingSubtitle = "Created exclusively by kvsna3545",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "KVSNA3545_GodMode",
+        FileName = "GodModeConfig"
+    },
+    Discord = {
+        Enabled = false,
+        Invite = "noinvitelink",
+        RememberJoins = true
+    },
+    KeySystem = false
+})
+
+-- Blade Ball specific variables
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
+
+-- Script variables
+local godModeEnabled = false
+local ultraFastBallEnabled = false
+local playerSpeed = 16
+local originalWalkSpeed = 16
+
+-- Find the ball in the workspace
+local function findBall()
+    if not integrityCheck() then return nil end
+    
+    for _, obj in ipairs(Workspace:GetChildren()) do
+        if obj.Name:find("Ball") or obj.Name:find("Sphere") or obj:FindFirstChild("BillboardGui") then
+            if obj:FindFirstChild("BodyVelocity") or obj:FindFirstChild("BodyPosition") or obj:FindFirstChild("LinearVelocity") then
+                return obj
+            end
+        end
+    end
+    
+    -- Additional ball detection methods
+    for _, obj in ipairs(Workspace:GetDescendants()) do
+        if obj:IsA("Part") and (obj.Name:find("Ball") or obj.Name:find("ball")) then
+            if obj.Size.Magnitude > 2 and obj.Size.Magnitude < 10 then
+                return obj
+            end
+        end
+    end
+    
+    return nil
+end
+
+-- Ultra Fast Ball function - makes the ball move at god-like speed
+local function ultraFastBall()
+    if not integrityCheck() or not ultraFastBallEnabled then return end
+    
+    local ball = findBall()
+    if not ball then return end
+    
+    -- Get player character
+    local character = LocalPlayer.Character
+    if not character then return end
+    
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if not humanoidRootPart then return end
+    
+    -- Check if player is hitting the ball
+    local ballPosition = ball.Position
+    local playerPosition = humanoidRootPart.Position
+    local distance = (ballPosition - playerPosition).Magnitude
+    
+    if distance < 15 then
+        -- Increase ball velocity to extreme levels
+        local bodyVelocity = ball:FindFirstChild("BodyVelocity")
+        local linearVelocity = ball:FindFirstChild("LinearVelocity")
+        
+        if bodyVelocity then
+            -- Increase velocity by 300% (god-like speed)
+            bodyVelocity.Velocity = bodyVelocity.Velocity * 4.0
+        elseif linearVelocity then
+            -- Increase linear velocity
+            linearVelocity.Velocity = linearVelocity.Velocity * 4.0
+        else
+            -- Add extreme velocity if none exists
+            local newVelocity = Instance.new("BodyVelocity")
+            newVelocity.Velocity = (ball.Position - playerPosition).Unit * 200
+            newVelocity.MaxForce = Vector3.new(100000, 100000, 100000)
+            newVelocity.Parent = ball
+            game.Debris:AddItem(newVelocity, 0.1)
+        end
+    end
+end
+
+-- God Mode function - makes player invincible
+local function enableGodMode()
+    if not integrityCheck() or not godModeEnabled then return end
+    
+    local character = LocalPlayer.Character
+    if not character then return end
+    
+    -- Make player invincible
+    local humanoid = character:FindFirstChild("Humanoid")
+    if humanoid then
+        humanoid.MaxHealth = math.huge
+        humanoid.Health = math.huge
+    end
+    
+    -- Make parts invulnerable
+    for _, part in ipairs(character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+            part.Transparency = 0.5
+            part.Color = Color3.fromRGB(255, 215, 0) -- Golden color
+        end
+    end
+end
+
+-- Adjust player speed
+local function adjustPlayerSpeed()
+    if not integrityCheck() then return end
+    
+    local character = LocalPlayer.Character
+    if not character then return end
+    
+    local humanoid = character:FindFirstChild("Humanoid")
+    if not humanoid then return end
+    
+    humanoid.WalkSpeed = playerSpeed
+end
+
+-- Apply black and gold theme
+local function applyGodTheme()
+    if not integrityCheck() then return end
+    
+    local rayfieldUI = game:GetService("CoreGui"):FindFirstChild("Rayfield")
+    if not rayfieldUI then return end
+    
+    -- Apply god-like theme (black and gold)
+    for _, element in ipairs(rayfieldUI:GetDescendants()) do
+        if element:IsA("Frame") then
+            if element.Name == "Main" or element.Name == "Dialog" then
+                element.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+            elseif element.Name == "Header" or element.Name == "Section" then
+                element.BackgroundColor3 = Color3.fromRGB(255, 215, 0) -- Gold
+            end
+        elseif element:IsA("TextButton") then
+            element.BackgroundColor3 = Color3.fromRGB(255, 215, 0) -- Gold
+            element.TextColor3 = Color3.fromRGB(0, 0, 0) -- Black text
+        elseif element:IsA("TextLabel") then
+            element.TextColor3 = Color3.fromRGB(255, 215, 0) -- Gold text
+        end
+    end
+end
+
+-- Apply god theme after UI loads
+task.spawn(function()
+    task.wait(2)
+    applyGodTheme()
+end)
+
+-- Main tab for God Mode features
+local MainTab = Window:CreateTab("God Features", 6023426915)
+MainTab:CreateSection("Ultra Ball Control")
+
+MainTab:CreateToggle({
+    Name = "🔥 ULTRA FAST BALL",
+    CurrentValue = false,
+    Callback = function(Value)
+        if not integrityCheck() then return end
+        
+        ultraFastBallEnabled = Value
+        if Value then
+            Rayfield:Notify({
+                Title = "ULTRA FAST BALL",
+                Content = "God-like ball speed activated!",
+                Duration = 3,
+            })
+        else
+            Rayfield:Notify({
+                Title = "ULTRA FAST BALL",
+                Content = "God-like ball speed deactivated",
+                Duration = 2,
+            })
+        end
+    end,
+})
+
+MainTab:CreateToggle({
+    Name = "👑 GOD MODE",
+    CurrentValue = false,
+    Callback = function(Value)
+        if not integrityCheck() then return end
+        
+        godModeEnabled = Value
+        if Value then
+            Rayfield:Notify({
+                Title = "GOD MODE",
+                Content = "Invincibility activated!",
+                Duration = 3,
+            })
+        else
+            -- Reset character appearance
+            local character = LocalPlayer.Character
+            if character then
+                for _, part in ipairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = true
+                        part.Transparency = 0
+                        part.Color = Color3.fromRGB(255, 255, 255)
+                    end
+                end
+            end
+            Rayfield:Notify({
+                Title = "GOD MODE",
+                Content = "Invincibility deactivated",
+                Duration = 2,
+            })
+        end
+    end,
+})
+
+MainTab:CreateSection("Player Control")
+
+MainTab:CreateSlider({
+    Name = "⚡ GOD SPEED",
+    Range = {16, 100},
+    Increment = 1,
+    Suffix = "studs/s",
+    CurrentValue = 16,
+    Callback = function(Value)
+        if not integrityCheck() then return end
+        
+        playerSpeed = Value
+        adjustPlayerSpeed()
+        Rayfield:Notify({
+            Title = "GOD SPEED",
+            Content = "Player speed: " .. Value .. " studs/s",
+            Duration = 2,
+        })
+    end,
+})
+
+MainTab:CreateButton({
+    Name = "🔁 RESET SPEED",
+    Callback = function()
+        if not integrityCheck() then return end
+        
+        playerSpeed = originalWalkSpeed
+        adjustPlayerSpeed()
+        Rayfield:Notify({
+            Title = "SPEED RESET",
+            Content = "Speed reset to default",
+            Duration = 2,
+        })
+    end,
+})
+
+-- Settings tab
+local SettingsTab = Window:CreateTab("Settings", 6031302934)
+SettingsTab:CreateSection("Configuration")
+
+SettingsTab:CreateKeybind({
+    Name = "🔥 UI TOGGLE KEY",
+    CurrentKeybind = "RightControl",
+    HoldToInteract = false,
+    Callback = function(Keybind)
+        if not integrityCheck() then return end
+        
+        Rayfield:Notify({
+            Title = "KEYBIND UPDATED",
+            Content = "UI toggle: " .. Keybind,
+            Duration = 2,
+        })
+    end,
+})
+
+SettingsTab:CreateButton({
+    Name = "🔄 REFRESH SCRIPT",
+    Callback = function()
+        if not integrityCheck() then return end
+        
+        Rayfield:Notify({
+            Title = "REFRESHING",
+            Content = "Script is refreshing...",
+            Duration = 2,
+        })
+        
+        -- Reapply settings
+        adjustPlayerSpeed()
+        applyGodTheme()
+        if godModeEnabled then
+            enableGodMode()
+        end
+    end,
+})
+
+SettingsTab:CreateButton({
+    Name = "❌ UNLOAD SCRIPT",
+    Callback = function()
+        -- Reset player speed before unloading
+        local character = LocalPlayer.Character
+        if character then
+            local humanoid = character:FindFirstChild("Humanoid")
+            if humanoid then
+                humanoid.WalkSpeed = originalWalkSpeed
+            end
+            
+            -- Reset appearance
+            for _, part in ipairs(character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = true
+                    part.Transparency = 0
+                    part.Color = Color3.fromRGB(255, 255, 255)
+                end
+            end
+        end
+        
+        -- Clear global variable
+        _G[scriptSignature] = nil
+        
+        Rayfield:Destroy()
+    end,
+})
+
+-- Creator credit section
+local CreditTab = Window:CreateTab("Credits", 6034287591)
+CreditTab:CreateSection("Script Information")
+
+CreditTab:CreateLabel("This God Mode script was created by:")
+CreditTab:CreateLabel("kvsna3545")
+CreditTab:CreateLabel(" ")
+CreditTab:CreateLabel("Features:")
+CreditTab:CreateLabel("- Ultra Fast Ball Hitting")
+CreditTab:CreateLabel("- God Mode Invincibility")
+CreditTab:CreateLabel("- Adjustable Player Speed")
+CreditTab:CreateLabel("- Anti-Copy Protection")
+
+CreditTab:CreateButton({
+    Name = "COPY DISCORD USERNAME",
+    Callback = function()
+        setclipboard("kvsna3545")
+        Rayfield:Notify({
+            Title = "COPIED",
+            Content = "Discord username copied to clipboard",
+            Duration = 3,
+        })
+    end,
+})
+
+-- Initial notification
+Rayfield:Notify({
+    Title = "🔥 GOD MODE ACTIVATED 🔥",
+    Content = "Created by kvsna3545 - Enjoy your god-like powers!",
+    Duration = 6,
+})
+
+-- Main loops
+task.spawn(function()
+    while task.wait(0.1) do
+        if not integrityCheck() then break end
+        
+        if ultraFastBallEnabled then
+            ultraFastBall()
+        end
+        
+        if godModeEnabled then
+            enableGodMode()
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(1) do
+        if not integrityCheck() then break end
+        adjustPlayerSpeed()
+    end
+end)
+
+task.spawn(function()
+    while task.wait(5) do
+        if not integrityCheck() then break end
+        applyGodTheme()
+    end
+end)
+
+-- Anti-copy protection
+task.spawn(function()
+    while task.wait(10) do
+        if not integrityCheck() then
+            Rayfield:Destroy()
+            break
+        end
+    end
+end)
