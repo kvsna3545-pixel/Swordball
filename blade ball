@@ -1,10 +1,3 @@
---[[
-  Blade Ball God Mode Script
-  Created by: kvsna3545
-  Features: Ultra-fast ball hitting, god-like abilities
-  Note: This script has anti-copy protection
-]]
-
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
 
 -- Unique identifier for this script
